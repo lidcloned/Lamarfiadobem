@@ -1,0 +1,109 @@
+Flutter crash report.
+Please report a bug at https://github.com/flutter/flutter/issues.
+
+## command
+
+flutter pub get
+
+## exception
+
+PathAccessException: PathAccessException: Cannot create link, path = '/storage/self/primary/Documents/lucasbeataconcluiu/windows/flutter/ephemeral/.plugin_symlinks/audioplayers_windows' (OS Error: Permission denied, errno = 13)
+
+```
+#0      _Link.throwIfError (dart:io/link.dart:357:7)
+#1      _Link.createSync (dart:io/link.dart:275:5)
+#2      ForwardingLink.createSync (package:file/src/forwarding/forwarding_link.dart:20:16)
+#3      ForwardingLink.createSync (package:file/src/forwarding/forwarding_link.dart:20:16)
+#4      _createPlatformPluginSymlinks (package:flutter_tools/src/flutter_plugins.dart:1132:12)
+#5      createPluginSymlinks (package:flutter_tools/src/flutter_plugins.dart:1048:5)
+#6      refreshPluginsList (package:flutter_tools/src/flutter_plugins.dart:1189:5)
+<asynchronous suspension>
+#7      FlutterProject.ensureReadyForPlatformSpecificTooling (package:flutter_tools/src/project.dart:379:5)
+<asynchronous suspension>
+#8      PackagesGetCommand.runCommand (package:flutter_tools/src/commands/packages.dart:383:7)
+<asynchronous suspension>
+#9      FlutterCommand.run.<anonymous closure> (package:flutter_tools/src/runner/flutter_command.dart:1551:27)
+<asynchronous suspension>
+#10     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#11     CommandRunner.runCommand (package:args/command_runner.dart:212:13)
+<asynchronous suspension>
+#12     FlutterCommandRunner.runCommand.<anonymous closure> (package:flutter_tools/src/runner/flutter_command_runner.dart:494:9)
+<asynchronous suspension>
+#13     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#14     FlutterCommandRunner.runCommand (package:flutter_tools/src/runner/flutter_command_runner.dart:431:5)
+<asynchronous suspension>
+#15     run.<anonymous closure>.<anonymous closure> (package:flutter_tools/runner.dart:98:11)
+<asynchronous suspension>
+#16     AppContext.run.<anonymous closure> (package:flutter_tools/src/base/context.dart:154:19)
+<asynchronous suspension>
+#17     main (package:flutter_tools/executable.dart:102:3)
+<asynchronous suspension>
+```
+
+## flutter doctor
+
+```
+[32m[✓][39m Flutter (Channel stable, 3.32.0, on Ubuntu 24.04.2 LTS
+    6.2.1-PRoot-Distro, locale en_US.UTF-8) [192ms]
+    [32m•[39m Flutter version 3.32.0 on channel stable at
+      /home/lucas/flutter
+    [32m•[39m Upstream repository https://github.com/flutter/flutter.git
+    [32m•[39m Framework revision be698c48a6 (6 days ago), 2025-05-19
+      12:59:14 -0700
+    [32m•[39m Engine revision 1881800949
+    [32m•[39m Dart version 3.8.0
+    [32m•[39m DevTools version 2.45.1
+
+[31m[✗][39m Android toolchain - develop for Android devices [74ms]
+    [31m✗[39m Unable to locate Android SDK.
+      Install Android Studio from:
+      https://developer.android.com/studio/index.html
+      On first launch it will assist you in installing the Android
+      SDK components.
+      (or visit https://flutter.dev/to/linux-android-setup for
+      detailed instructions).
+      If the Android SDK has been installed to a custom location,
+      please use
+      `flutter config --android-sdk` to update to that location.
+
+
+[31m[✗][39m Chrome - develop for the web (Cannot find Chrome executable at
+    google-chrome) [37ms]
+    [33m![39m Cannot find Chrome. Try setting CHROME_EXECUTABLE to a Chrome
+      executable.
+
+[31m[✗][39m Linux toolchain - develop for Linux desktop [91ms]
+    [31m✗[39m clang++ is required for Linux development.
+      It is likely available from your distribution (e.g.: apt
+      install clang), or can be downloaded from
+      https://releases.llvm.org/
+    [31m✗[39m CMake is required for Linux development.
+      It is likely available from your distribution (e.g.: apt
+      install cmake), or can be downloaded from
+      https://cmake.org/download/
+    [31m✗[39m ninja is required for Linux development.
+      It is likely available from your distribution (e.g.: apt
+      install ninja-build), or can be downloaded from
+      https://github.com/ninja-build/ninja/releases
+    [31m✗[39m pkg-config is required for Linux development.
+      It is likely available from your distribution (e.g.: apt
+      install pkg-config), or can be downloaded from
+      https://www.freedesktop.org/wiki/Software/pkg-config/
+
+[33m[!][39m Android Studio (not installed) [19ms]
+    [32m•[39m Android Studio not found; download from
+      https://developer.android.com/studio/index.html
+      (or visit https://flutter.dev/to/linux-android-setup for
+      detailed instructions).
+
+[32m[✓][39m Connected device (1 available) [109ms]
+    [32m•[39m Linux (desktop) • linux • linux-arm64 • Ubuntu 24.04.2 LTS
+      6.2.1-PRoot-Distro
+
+[32m[✓][39m Network resources [724ms]
+    [32m•[39m All expected network resources are available.
+
+[33m![39m Doctor found issues in 4 categories.
+```
