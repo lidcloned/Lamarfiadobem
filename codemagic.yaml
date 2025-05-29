@@ -1,64 +1,62 @@
+# codemagic.yaml para o projeto lamafia
+
 workflows:
-  lamafia-Android-Release:
-    instance_type: mac_mini_m2
+  lamafia-android-build:
+    name: Lamafia Android Build
+    # Escolha a instância apropriada (ex: linux_x2 para builds Android mais rápidos)
+    instance_type: linux_x2
+    # Use a versão estável do Flutter ou especifique uma versão
+    flutter: stable
+    # Ambiente para build Android
     environment:
+      android_signing:
+        # Adicione suas credenciais de assinatura aqui (seguro via Codemagic UI)
+        # keystore: Encrypted(...) 
+        # keystore_password: Encrypted(...)
+        # key_alias: Encrypted(...)
+        # key_password: Encrypted(...)
       groups:
-        - keystore_credentials
-      vars:
-        # Variáveis de ambiente necessárias para o Firebase
-        # GOOGLE_SERVICES_JSON: Encrypted(...)
-    triggering:
-      events:
-        - push
-      branch_patterns:
-        - pattern: master
-          include: true
+        - google_play_credentials # Grupo de variáveis para publicação no Google Play (opcional)
+
     scripts:
-      - name: Descompactar projeto
+      - name: Set up local properties
         script: |
-          echo "Descompactando o projeto do arquivo 7z..."
-          # Instalar 7zip se não estiver disponível
-          brew install p7zip || true
-          # Descompactar usando 7z
-          7z x BACKUP_LAMAFIASUCESSFULL.7z -oextracted_project
-          cd extracted_project
-          echo "Projeto descompactado com sucesso!"
-          
-      - name: Decode google-services.json
-        script: |
-          echo "Decodificando google-services.json..."
-          if [ -z "$GOOGLE_SERVICES_JSON" ]; then
-            echo "Erro: Variável GOOGLE_SERVICES_JSON não definida na UI do Codemagic."
-            exit 1
-          fi
-          echo $GOOGLE_SERVICES_JSON | base64 --decode > extracted_project/android/app/google-services.json
-          if [ $? -ne 0 ]; then
-            echo "Erro ao decodificar GOOGLE_SERVICES_JSON. Verifique se está em Base64."
-            exit 1
-          fi
-          echo "google-services.json decodificado em extracted_project/android/app/google-services.json"
-          
+          echo "flutter.sdk=$FLUTTER_ROOT" > "$CM_BUILD_DIR/android/local.properties"
+      # Descomente e configure se você adicionou as credenciais de assinatura acima
+      # - name: Set up keystore
+      #   script: |
+      #     echo $CM_KEYSTORE | base64 --decode > $CM_KEYSTORE_PATH
+      #     echo "storeFile=$CM_KEYSTORE_PATH" > $CM_BUILD_DIR/android/key.properties
+      #     echo "storePassword=$CM_KEYSTORE_PASSWORD" >> $CM_BUILD_DIR/android/key.properties
+      #     echo "keyAlias=$CM_KEY_ALIAS" >> $CM_BUILD_DIR/android/key.properties
+      #     echo "keyPassword=$CM_KEY_PASSWORD" >> $CM_BUILD_DIR/android/key.properties
+
       - name: Get Flutter packages
         script: |
-          cd extracted_project
           flutter pub get
-          
-      - name: Generate App Icons
+
+      - name: Build Android APK
         script: |
-          cd extracted_project
-          flutter pub run flutter_launcher_icons
-          
-      - name: Build Android Release APK
-        script: |
-          cd extracted_project
+          # Limpa builds anteriores (boa prática)
+          flutter clean
+          # Constrói o APK de release
+          # Se você configurou a assinatura, o APK será assinado
           flutter build apk --release
-          
-      - name: Build Android App Bundle
-        script: |
-          cd extracted_project
-          flutter build appbundle --release
-          
+
     artifacts:
-      - extracted_project/build/app/outputs/flutter-apk/app-release.apk
-      - extracted_project/build/app/outputs/bundle/release/app-release.aab
-      
+      # Define onde encontrar o APK gerado
+      - build/app/outputs/flutter-apk/app-release.apk
+
+    publishing:
+      # Opcional: Configurar publicação automática para Google Play, email, Slack, etc.
+      # email:
+      #   recipients:
+      #     - seu_email@exemplo.com
+      #   notify:
+      #     success: true
+      #     failure: false # Notificar apenas em caso de sucesso
+      # google_play:
+      #   credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
+      #   track: internal # Ou alpha, beta, production
+      #   submit_as_draft: true
+
