@@ -1,28 +1,39 @@
-# codemagic.yaml para o projeto lamafia
+# codemagic.yaml final para o projeto lamafia (Android APK)
 
 workflows:
-  lamafia-android-build:
-    name: Lamafia Android Build
-    # Escolha a instância apropriada (ex: linux_x2 para builds Android mais rápidos)
+  lamafia-android-apk:
+    name: Lamafia Android APK Build
+    # Instância Linux é geralmente mais rápida e econômica para builds Android
     instance_type: linux_x2
-    # Use a versão estável do Flutter ou especifique uma versão
+    # Usar a versão estável do Flutter
     flutter: stable
-    # Ambiente para build Android
     environment:
-      android_signing:
-        # Adicione suas credenciais de assinatura aqui (seguro via Codemagic UI)
-        # keystore: Encrypted(...) 
-        # keystore_password: Encrypted(...)
-        # key_alias: Encrypted(...)
-        # key_password: Encrypted(...)
-      groups:
-        - google_play_credentials # Grupo de variáveis para publicação no Google Play (opcional)
+      # Grupo para credenciais de assinatura (configurar na UI do Codemagic)
+      # android_signing:
+      #   - keystore_credentials
+      # Grupo para credenciais do Google Play (opcional, configurar na UI)
+      # groups:
+      #   - google_play_credentials
+      vars:
+        # Se precisar do google-services.json via variável (recomendado):
+        # 1. Converta seu google-services.json para Base64
+        # 2. Crie uma variável de ambiente na UI do Codemagic chamada GOOGLE_SERVICES_JSON
+        # 3. Cole o conteúdo Base64 lá (marque como 'secure')
+        # GOOGLE_SERVICES_JSON: Encrypted(...)
+        # Se o google-services.json já está no repositório (menos seguro), ignore esta variável.
 
     scripts:
       - name: Set up local properties
         script: |
           echo "flutter.sdk=$FLUTTER_ROOT" > "$CM_BUILD_DIR/android/local.properties"
-      # Descomente e configure se você adicionou as credenciais de assinatura acima
+
+      # Descomente este bloco se você configurou a variável GOOGLE_SERVICES_JSON na UI
+      # - name: Decode google-services.json
+      #   script: |
+      #     echo $GOOGLE_SERVICES_JSON | base64 --decode > $CM_BUILD_DIR/android/app/google-services.json
+      #     echo "google-services.json created in android/app/"
+
+      # Descomente e configure se você adicionou as credenciais de assinatura (keystore) na UI
       # - name: Set up keystore
       #   script: |
       #     echo $CM_KEYSTORE | base64 --decode > $CM_KEYSTORE_PATH
@@ -44,19 +55,15 @@ workflows:
           flutter build apk --release
 
     artifacts:
-      # Define onde encontrar o APK gerado
+      # Define onde encontrar o APK gerado para disponibilizar no Codemagic
       - build/app/outputs/flutter-apk/app-release.apk
 
     publishing:
-      # Opcional: Configurar publicação automática para Google Play, email, Slack, etc.
+      # Opcional: Configurar notificação por email ou publicação
       # email:
       #   recipients:
       #     - seu_email@exemplo.com
       #   notify:
-      #     success: true
-      #     failure: false # Notificar apenas em caso de sucesso
-      # google_play:
-      #   credentials: $GCLOUD_SERVICE_ACCOUNT_CREDENTIALS
-      #   track: internal # Ou alpha, beta, production
-      #   submit_as_draft: true
+      #     success: true # Notificar apenas em caso de sucesso
+      #     failure: false
 
